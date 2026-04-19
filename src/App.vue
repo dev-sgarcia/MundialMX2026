@@ -1,14 +1,14 @@
 <template>
   <main class="contenedor">
     <header class="cabecera">
-      <h1>🏆 Mundial México 2026 🏆</h1>
-      
+      <h1>🏆 Mundial México 2026 🏆</h1>      
       <div v-if="sesionActiva" class="perfil-usuario">
         <p>¡Hola, <strong>{{ usuario?.full_name || 'Estratega' }}</strong>!</p>
         <span class="leyenda-jornada">Tu Pronóstico de la Jornada</span>
         <button @click="cerrarSesion" class="btn-salir">Cerrar Sesión</button>
       </div>
     </header>    
+  
     <div v-if="!sesionActiva" class="pantalla-login">
       <div class="login-tarjeta">
         <h2>¡Bienvenido al torneo!</h2>
@@ -24,57 +24,61 @@
       </div>
     </div>
 
-    <div v-if="mostrarReglas" class="modal-fondo" @click.self="mostrarReglas = false">
-      <div class="modal-contenido">
-        <h3>📜 Reglas MundialMX2026</h3>
-        <div class="reglas-texto">
-          <ul>
-            <li><strong>3 Puntos:</strong> Si le atinas al marcador exacto (Ej. Dices 2-1 y termina 2-1).</li>
-            <li><strong>1 Punto :</strong> Si le atinas al equipo ganador o si es empate, pero el marcador no es exacto (Ej. Dices 2-0 y termina 1-0).</li>
-            <li><strong>10 Puntos :</strong> Si eliges al campeón desde el inicio del torneo.</li>
-            <li><strong>Tiempo límite:</strong> Tienes hasta 1 hora antes de que inicie cada partido para guardar o cambiar tu resultado.</li>
-            <li><strong>Premios por puntos:</strong> 1 Ganador de fases de grupo, 1 Ganador fase finalistas y 1 Ganador puntaje total.</li>
-            <li><strong>Desempate :</strong> En caso de empate en puntos, se toma en cuenta el primero que haya registrado su marcador.</li>
-          </ul>
+    <div v-if="sesionActiva">   
+      <div v-if="vista === 'lobby'" class="vista-lobby">
+        <div class="encabezado-lobby">
+          <h2>Mis Ligas</h2>
+          <button @click="crearLigaPrueba" class="btn-crear">➕ Crear Liga de Prueba</button>
         </div>
-        <button @click="mostrarReglas = false" class="btn-cerrar-modal">Entendido</button>
-      </div>
-    </div>
-  
-    <div v-if="sesionActiva">
-      <div v-if="cargando" class="mensaje-carga">
-        <p>⏳ Trayendo los partidos desde la nube...</p>
+
+        <div v-if="misLigas.length === 0" class="mensaje-vacio">
+          <p>Aún no perteneces a ninguna liga. ¡Crea una para empezar!</p>
+        </div>
+
+        <div class="grid-ligas">
+          <article v-for="membresia in misLigas" :key="membresia.league_id" class="tarjeta-liga" @click="entrarALiga(membresia.leagues)">
+            <h3>🏆 {{ membresia.leagues.name }}</h3>
+            <p>Código: {{ membresia.leagues.invite_code }}</p>
+            <p class="campeon-texto">Tu Campeón: {{ membresia.champion_team || 'Aún sin seleccionar' }}</p>
+          </article>
+        </div>
       </div>
 
-      <div v-else class="grid-partidos">
-        <article v-for="partido in partidos" :key="partido.id" class="tarjeta-partido">
-          <div class="tarjeta-encabezado">
-            <span class="fase">
-              {{ partido.stage_category }}
-              <span v-if="partido.guardado" class="badge-guardado">✅ Guardado</span>
-            </span>
-            <span class="fecha">📅 {{ partido.match_date }}</span>
-          </div>          
-          <div class="tarjeta-cuerpo">
-            <div class="equipo"><span class="nombre">{{ partido.home_team }}</span></div>
-          <div class="pronostico">
-            <input 
-              type="number" min="0" max="15" class="input-gol" placeholder="-" 
-              v-model="partido.home_score" 
-              @change="guardarPronostico(partido)" 
-            />
-            <span class="vs">VS</span>
-            <input 
-              type="number" min="0" max="15" class="input-gol" placeholder="-" 
-              v-model="partido.away_score" 
-              @change="guardarPronostico(partido)" 
-            />
+      <div v-if="mostrarReglas" class="modal-fondo" @click.self="mostrarReglas = false">
+        <div class="modal-contenido">
+          <h3>📜 Reglas MundialMX2026</h3>
+          <div class="reglas-texto">
+            <ul>
+              <li><strong>3 Puntos:</strong> Si le atinas al marcador exacto (Ej. Dices 2-1 y termina 2-1).</li>
+              <li><strong>1 Punto :</strong> Si le atinas al equipo ganador o si es empate, pero el marcador no es exacto (Ej. Dices 2-0 y termina 1-0).</li>
+              <li><strong>10 Puntos :</strong> Si eliges al campeón desde el inicio del torneo.</li>
+              <li><strong>Tiempo límite:</strong> Tienes hasta 1 hora antes de que inicie cada partido para guardar o cambiar tu resultado.</li>
+              <li><strong>Premios por puntos:</strong> 1 Ganador de fases de grupo, 1 Ganador fase finalistas y 1 Ganador puntaje total.</li>
+              <li><strong>Desempate :</strong> En caso de empate en puntos, se toma en cuenta el primero que haya registrado su marcador.</li>
+            </ul>
           </div>
-          <div class="equipo"><span class="nombre">{{ partido.away_team }}</span></div>
-          </div>
-        </article>
+          <button @click="mostrarReglas = false" class="btn-cerrar-modal">Entendido</button>
+        </div>
+      </div>
+
+
+
+      <div v-if="vista === 'partidos'" class="vista-partidos">
+        <button @click="volverAlLobby" class="btn-volver">⬅️ Volver a mis ligas</button>
+        <h2 class="titulo-liga-activa">{{ ligaActual?.name }}</h2>
+
+        <div v-if="cargando" class="mensaje-carga">
+          <p>⏳ Trayendo los partidos desde la nube...</p>
+        </div>
+
+        <div v-for="(partidosDelDia, fecha) in partidosAgrupados" :key="fecha" class="bloque-jornada">
+          <h2 class="titulo-fecha">📅 {{ fecha }}</h2>
+          <div class="grid-partidos">
+             </div>
+        </div>
       </div>
     </div>
+
   </main>
 </template>
 
@@ -87,6 +91,11 @@ const partidos = ref([])
 const cargando = ref(true)
 const sesionActiva = ref(false) 
 const usuario = ref(null) // Aquí guardaremos el nombre y datos
+
+// Navegación y Ligas
+const vista = ref('lobby') // Puede ser 'lobby' o 'partidos'
+const misLigas = ref([])
+const ligaActual = ref(null)
 
 const mostrarReglas = ref(false) // Controla la ventana emergente de reglas
 
@@ -104,6 +113,54 @@ const cerrarSesion = async () => {
   if (error) console.error("Error al salir:", error)
 }
 
+// Traer las ligas a las que pertenece el usuario
+const cargarLigas = async (userId) => {
+  const { data, error } = await supabase
+    .from('league_members')
+    .select('league_id, champion_team, leagues(id, name, invite_code)')
+    .eq('user_id', userId)
+  
+  if (!error && data) {
+    misLigas.value = data
+  }
+}
+
+// Función rápida para crear una liga provisional
+const crearLigaPrueba = async () => {
+  const { data: { session } } = await supabase.auth.getSession()
+  if (!session) return;
+  const userId = session.user.id;
+
+  // 1. Crear la liga
+  const { data: nuevaLiga, error: errLiga } = await supabase
+    .from('leagues')
+    .insert({ name: 'Liga Godín', invite_code: 'GODIN-' + Math.floor(Math.random() * 1000), owner_id: userId })
+    .select()
+    .single()
+
+  // 2. Inscribir al usuario creador en esa liga
+  if (nuevaLiga) {
+    await supabase.from('league_members').insert({
+      league_id: nuevaLiga.id,
+      user_id: userId
+    })
+    // Recargar la lista para que aparezca en pantalla
+    await cargarLigas(userId)
+  }
+}
+
+// Navegar hacia el interior de una liga
+const entrarALiga = (liga) => {
+  ligaActual.value = liga
+  vista.value = 'partidos'
+  // Aquí más adelante cargaremos los pronósticos específicos de esta liga
+}
+
+// Regresar al Lobby
+const volverAlLobby = () => {
+  ligaActual.value = null
+  vista.value = 'lobby'
+}
 
 // Función para guardar en la base de datos
 const guardarPronostico = async (partido) => {
@@ -146,6 +203,7 @@ onMounted(async () => {
   if (session) {
     sesionActiva.value = true
     usuario.value = session.user.user_metadata
+    cargarLigas(session.user.id)    
   }
 
   // 2. Escuchar cambios de sesión
@@ -378,4 +436,14 @@ onMounted(async () => {
   50% { transform: scale(1.1); }
   100% { transform: scale(1); opacity: 1; }
 }
+
+.vista-lobby { max-width: 800px; margin: 0 auto; }
+.encabezado-lobby { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.btn-crear { background: #2563eb; color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; }
+.grid-ligas { display: grid; gap: 15px; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); }
+.tarjeta-liga { background: white; padding: 20px; border-radius: 12px; border-left: 5px solid #2563eb; cursor: pointer; transition: transform 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.05); text-align: left; }
+.tarjeta-liga:hover { transform: translateY(-3px); }
+.campeon-texto { font-size: 0.85rem; color: #64748b; margin-top: 10px; }
+.btn-volver { background: transparent; border: 1px solid #cbd5e1; padding: 8px 12px; border-radius: 6px; cursor: pointer; margin-bottom: 20px; }
+.titulo-liga-activa { color: #1e293b; margin-bottom: 30px; font-size: 2rem; }
 </style>
