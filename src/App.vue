@@ -19,14 +19,14 @@
         </button>
 
         <div class="enlaces-legales">
-          <a href="#" @click.prevent="mostrarReglas = true">📜 Leer Reglas del Torneo</a>
+          <a href="#" @click.prevent="mostrarReglas = true">📜 Reglas del Torneo</a>
         </div>
       </div>
     </div>
 
     <div v-if="mostrarReglas" class="modal-fondo" @click.self="mostrarReglas = false">
       <div class="modal-contenido">
-        <h3>📜 Reglas de El Oráculo 2026</h3>
+        <h3>📜 Reglas MundialMX2026</h3>
         <div class="reglas-texto">
           <ul>
             <li><strong>Puntaje Exacto:</strong> 3 puntos si atinas el resultado exacto (Ej. Dices 2-1 y termina 2-1).</li>
