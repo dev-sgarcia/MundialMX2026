@@ -29,10 +29,12 @@
         <h3>📜 Reglas MundialMX2026</h3>
         <div class="reglas-texto">
           <ul>
-            <li><strong>Puntaje Exacto:</strong> 3 puntos si atinas el resultado exacto (Ej. Dices 2-1 y termina 2-1).</li>
-            <li><strong>Ganador Correcto:</strong> 1 punto si atinas quién gana o si es empate, pero no el marcador exacto (Ej. Dices 2-0 y termina 1-0).</li>
-            <li><strong>Cierre de Pronósticos:</strong> Tienes hasta 1 hora antes de que inicie cada partido para guardar o cambiar tu resultado.</li>
-            <li><strong>Premio:</strong> ¡El respeto absoluto como el mejor estratega del mundial!</li>
+            <li><strong>3 Puntos:</strong> Si le atinas al marcador exacto (Ej. Dices 2-1 y termina 2-1).</li>
+            <li><strong>1 Punto :</strong> Si le atinas al equipo ganador o si es empate, pero el marcador no es exacto (Ej. Dices 2-0 y termina 1-0).</li>
+            <li><strong>10 Puntos :</strong> Si eliges al campeón desde el inicio del torneo.</li>
+            <li><strong>Tiempo límite:</strong> Tienes hasta 1 hora antes de que inicie cada partido para guardar o cambiar tu resultado.</li>
+            <li><strong>Premios por puntos:</strong> 1 Ganador de fases de grupo, 1 Ganador fase finalistas y 1 Ganador puntaje total.</li>
+            <li><strong>Desempate :</strong> En caso de empate en puntos, se toma en cuenta el primero que haya registrado su marcador.</li>
           </ul>
         </div>
         <button @click="mostrarReglas = false" class="btn-cerrar-modal">Entendido</button>
