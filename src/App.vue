@@ -8,7 +8,24 @@
         <button @click="cerrarSesion" class="btn-salir">Cerrar Sesión</button>
       </div>
     </header>    
-  
+
+      <div v-if="mostrarReglas" class="modal-fondo" @click.self="mostrarReglas = false">
+        <div class="modal-contenido">
+          <h3>📜 Reglas MundialMX2026</h3>
+          <div class="reglas-texto">
+            <ul>
+              <li><strong>3 Puntos:</strong> Si le atinas al marcador exacto (Ej. Dices 2-1 y termina 2-1).</li>
+              <li><strong>1 Punto :</strong> Si le atinas al equipo ganador o si es empate, pero el marcador no es exacto (Ej. Dices 2-0 y termina 1-0).</li>
+              <li><strong>10 Puntos :</strong> Si eliges al campeón desde el inicio del torneo.</li>
+              <li><strong>Tiempo límite:</strong> Tienes hasta 1 hora antes de que inicie cada partido para guardar o cambiar tu resultado.</li>
+              <li><strong>Premios por puntos:</strong> 1 Ganador de fases de grupo, 1 Ganador fase finalistas y 1 Ganador puntaje total.</li>
+              <li><strong>Desempate :</strong> En caso de empate en puntos, se toma en cuenta el primero que haya registrado su marcador.</li>
+            </ul>
+          </div>
+          <button @click="mostrarReglas = false" class="btn-cerrar-modal">Entendido</button>
+        </div>
+      </div>
+    
     <div v-if="!sesionActiva" class="pantalla-login">
       <div class="login-tarjeta">
         <h2>¡Bienvenido al torneo!</h2>
@@ -43,25 +60,6 @@
           </article>
         </div>
       </div>
-
-      <div v-if="mostrarReglas" class="modal-fondo" @click.self="mostrarReglas = false">
-        <div class="modal-contenido">
-          <h3>📜 Reglas MundialMX2026</h3>
-          <div class="reglas-texto">
-            <ul>
-              <li><strong>3 Puntos:</strong> Si le atinas al marcador exacto (Ej. Dices 2-1 y termina 2-1).</li>
-              <li><strong>1 Punto :</strong> Si le atinas al equipo ganador o si es empate, pero el marcador no es exacto (Ej. Dices 2-0 y termina 1-0).</li>
-              <li><strong>10 Puntos :</strong> Si eliges al campeón desde el inicio del torneo.</li>
-              <li><strong>Tiempo límite:</strong> Tienes hasta 1 hora antes de que inicie cada partido para guardar o cambiar tu resultado.</li>
-              <li><strong>Premios por puntos:</strong> 1 Ganador de fases de grupo, 1 Ganador fase finalistas y 1 Ganador puntaje total.</li>
-              <li><strong>Desempate :</strong> En caso de empate en puntos, se toma en cuenta el primero que haya registrado su marcador.</li>
-            </ul>
-          </div>
-          <button @click="mostrarReglas = false" class="btn-cerrar-modal">Entendido</button>
-        </div>
-      </div>
-
-
 
       <div v-if="vista === 'partidos'" class="vista-partidos">
         <button @click="volverAlLobby" class="btn-volver">⬅️ Volver a mis ligas</button>
@@ -126,25 +124,51 @@ const cargarLigas = async (userId) => {
 }
 
 // Función rápida para crear una liga provisional
+// Función para crear la liga "Mundialito RA"
 const crearLigaPrueba = async () => {
   const { data: { session } } = await supabase.auth.getSession()
-  if (!session) return;
+  if (!session) {
+    alert("Error: No se detectó tu sesión de Google.");
+    return;
+  }
   const userId = session.user.id;
 
-  // 1. Crear la liga
+  // 1. Intentar crear la liga
   const { data: nuevaLiga, error: errLiga } = await supabase
     .from('leagues')
-    .insert({ name: 'Liga Godín', invite_code: 'GODIN-' + Math.floor(Math.random() * 1000), owner_id: userId })
+    .insert({ 
+      name: 'Mundialito RA', 
+      invite_code: 'MUNDIALITO-' + Math.floor(Math.random() * 10000), 
+      owner_id: userId 
+    })
     .select()
     .single()
 
-  // 2. Inscribir al usuario creador en esa liga
+  // SI HAY ERROR AL CREAR, QUE NOS AVISE:
+  if (errLiga) {
+    console.error("Error en leagues:", errLiga);
+    alert("Fallo al crear la liga: " + errLiga.message);
+    return; // Detenemos la función aquí
+  }
+
+  // 2. Intentar inscribir al usuario
   if (nuevaLiga) {
-    await supabase.from('league_members').insert({
-      league_id: nuevaLiga.id,
-      user_id: userId
-    })
-    // Recargar la lista para que aparezca en pantalla
+    const { error: errMiembro } = await supabase
+      .from('league_members')
+      .insert({
+        league_id: nuevaLiga.id,
+        user_id: userId
+      })
+
+    // SI HAY ERROR AL INSCRIBIR, QUE NOS AVISE:
+    if (errMiembro) {
+      console.error("Error en league_members:", errMiembro);
+      alert("Liga creada, pero falló la inscripción: " + errMiembro.message);
+      return;
+    }
+
+    // ¡ÉXITO!
+    alert("¡Mundialito RA creado con éxito!");
     await cargarLigas(userId)
   }
 }
