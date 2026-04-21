@@ -461,7 +461,6 @@ onMounted(async () => {
 /* --- ESTILOS DE LA NUEVA PORTADA --- */
 .pantalla-login {
   /* Imagen de estadio gratuita de alta calidad */
-  /*background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1731870881782-1948058d9ce1?q=80&w=1074&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');*/
   background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1522778119026-d647f0596c20?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80');  
   background-size: cover;
   background-position: center;
@@ -553,6 +552,13 @@ onMounted(async () => {
   box-shadow: 0 2px 4px rgba(0,0,0,0.05);
   display: inline-block;
   animation: latido 0.3s ease-out;
+}
+
+/* Animación que hace que el botoncito brinque un poco al aparecer */
+@keyframes latido {
+  0% { transform: scale(0.8); opacity: 0; }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); opacity: 1; }
 }
 
 
@@ -649,13 +655,6 @@ onMounted(async () => {
   margin: 0; 
 }
 
-
-/* Animación que hace que el botoncito brinque un poco al aparecer */
-@keyframes latido {
-  0% { transform: scale(0.8); opacity: 0; }
-  50% { transform: scale(1.1); }
-  100% { transform: scale(1); opacity: 1; }
-}
 
 .vista-lobby { max-width: 800px; margin: 0 auto; }
 .encabezado-lobby { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
