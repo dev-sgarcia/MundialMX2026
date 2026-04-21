@@ -379,7 +379,7 @@ onMounted(async () => {
   width: 100%;
   min-height: 100vh; /* 100vh significa: "Ocupa el 100% del alto de la pantalla visual" */  
   /* --- AJUSTES DEL FONDO DEL ESTADIO --- */
-  background-image: url('/ruta-a-tu-imagen/estadio.jpg'); /* ¡Asegúrate de poner aquí el nombre correcto de tu imagen! */
+  background-image: url('https://images.unsplash.com/photo-1522778119026-d647f0596c20?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80'); /* ¡Asegúrate de poner aquí el nombre correcto de tu imagen! */
   background-size: cover; /* Hace que la imagen crezca para cubrir todo sin deformarse */
   background-position: center center; /* Centra la imagen perfectamente */
   background-attachment: fixed; /* Efecto elegante: el fondo se queda quieto aunque hagas scroll hacia abajo */
