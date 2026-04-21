@@ -86,7 +86,7 @@ import { supabase } from './supabase'
 
 // Variables reactivas
 const partidos = ref([])
-const cargando = ref(true)
+const cargando = ref(false)
 const sesionActiva = ref(false) 
 const usuario = ref(null) // Aquí guardaremos el nombre y datos
 
@@ -174,10 +174,11 @@ const crearLigaPrueba = async () => {
 }
 
 // Navegar hacia el interior de una liga
-const entrarALiga = (liga) => {
+const entrarALiga = async (liga) => {
   ligaActual.value = liga
   vista.value = 'partidos'
-  // Aquí más adelante cargaremos los pronósticos específicos de esta liga
+  // ¡Ahora sí llamamos a la base de datos!
+  await cargarPartidos()
 }
 
 // Regresar al Lobby
@@ -186,41 +187,83 @@ const volverAlLobby = () => {
   vista.value = 'lobby'
 }
 
-// Función para guardar en la base de datos
-const guardarPronostico = async (partido) => {
-  if (partido.home_score === null || partido.home_score === undefined || 
-      partido.away_score === null || partido.away_score === undefined) {
+// Cargar los partidos y los pronósticos de la liga seleccionada
+const cargarPartidos = async () => {
+  cargando.value = true;
+  partidos.value = []; // Limpiamos la lista
+
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) return;
+  
+  const userId = session.user.id;
+  const leagueId = ligaActual.value.id; // El ID del Mundialito RA
+
+  // 1. Traer el catálogo de partidos oficiales
+  const { data: dbMatches, error: errMatches } = await supabase
+    .from('matches')
+    .select('*')
+    .order('id', { ascending: true }); // Ordenados para que salgan en secuencia
+
+  if (errMatches) {
+    console.error("Error al cargar partidos:", errMatches);
+    cargando.value = false;
     return;
   }
 
-  const { data: { session } } = await supabase.auth.getSession()
-  if (!session) return;
-  const userId = session.user.id;
+  // 2. Traer TUS pronósticos exclusivos para esta liga
+  const { data: misPronosticos, error: errPronosticos } = await supabase
+    .from('predictions')
+    .select('*')
+    .eq('user_id', userId)
+    .eq('league_id', leagueId);
 
+  // 3. Fusionar datos: Si ya tenías un resultado, lo ponemos en pantalla
+  const partidosFusionados = dbMatches.map(partido => {
+    const pronosticoGuardado = misPronosticos?.find(p => p.match_id === partido.id);
+    
+    return {
+      ...partido,
+      home_score: pronosticoGuardado ? pronosticoGuardado.home_score : null,
+      away_score: pronosticoGuardado ? pronosticoGuardado.away_score : null,
+      guardado: !!pronosticoGuardado
+    };
+  });
+
+  partidos.value = partidosFusionados;
+  cargando.value = false;
+};
+
+const guardarPronostico = async (partido) => {
+  const { data: { session } } = await supabase.auth.getSession()
+  if (!session) return
+
+  // Si alguna caja está vacía, no guardamos nada todavía
+  if (partido.home_score === null || partido.home_score === '' || 
+      partido.away_score === null || partido.away_score === '') {
+    return;
+  }
+
+  // Mandamos las 3 coordenadas a la base de datos
   const { error } = await supabase
     .from('predictions')
     .upsert({
-      user_id: userId,
+      user_id: session.user.id,
       match_id: partido.id,
+      league_id: ligaActual.value.id, // ¡ESTA ES LA CLAVE DE LA MULTI-LIGA!
       home_score: partido.home_score,
       away_score: partido.away_score
-    }, { onConflict: 'user_id, match_id' }) 
+    }, {
+      onConflict: 'user_id, match_id, league_id' // Le recordamos a Supabase la regla
+    })
 
-  if (error) {
-    console.error("Error al guardar el pronóstico:", error)
+  if (!error) {
+    partido.guardado = true; // Aparece el check verde
   } else {
-    // MAGIA VISUAL: Encendemos el mensaje
-    partido.guardado = true;
-    
-    // Lo apagamos automáticamente después de 2500 milisegundos (2.5 segundos)
-    setTimeout(() => {
-      partido.guardado = false;
-    }, 2500);
+    console.error("Error al guardar pronóstico:", error);
   }
 }
 
 // Función de arranque para cargar los datos
-// Función de arranque
 onMounted(async () => {
   // 1. Revisar sesión
   const { data: { session } } = await supabase.auth.getSession()
