@@ -203,6 +203,9 @@ const cargarPartidos = async () => {
     .from('matches')
     .select('*')
     .order('id', { ascending: true }); // Ordenados para que salgan en secuencia
+    // --- AGREGA ESTA LÍNEA PARA ESPIAR LOS DATOS ---
+    console.log("Datos de Supabase:", dbMatches);
+
 
   if (errMatches) {
     console.error("Error al cargar partidos:", errMatches);
