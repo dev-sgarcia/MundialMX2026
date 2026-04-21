@@ -75,8 +75,8 @@
           <h2 class="titulo-fecha">📅 {{ fecha }}</h2>
           
           <div class="grid-partidos">
-            <article v-for="partido in partidosDelDia" :key="partido.id" class="tarjeta-partido">
-              
+
+            <article v-for="partido in partidosDelDia" :key="partido.id" class="tarjeta-partido">              
               <div class="tarjeta-encabezado">
                 <span class="fase">
                   {{ partido.group_name || 'Fase de Grupos' }}
@@ -85,33 +85,35 @@
                 <span class="fecha">🏟️ {{ partido.stadium }} | 🕒 {{ partido.match_time }}</span>
               </div>
 
-              <div class="equipos">
-                <div class="equipo">
-                  <span class="bandera">🏳️</span>
-                  <span class="nombre-equipo">{{ partido.home_team }}</span>
+              <div class="cuerpo-partido">
+                
+                <div class="fila-equipo">
+                  <div class="detalles-equipo">
+                    <span class="bandera">🏠</span>
+                    <span class="nombre-equipo">{{ partido.home_team }}</span>
+                  </div>
+                  <input 
+                    type="number" min="0" max="15" class="input-gol" placeholder="-" 
+                    v-model="partido.home_score" 
+                    @change="guardarPronostico(partido)" 
+                  />
                 </div>
-                <span class="vs-fijo">VS</span>
-                <div class="equipo">
-                  <span class="bandera">🏴</span>
-                  <span class="nombre-equipo">{{ partido.away_team }}</span>
-                </div>
-              </div>
 
-              <div class="pronostico">
-                <input 
-                  type="number" min="0" max="15" class="input-gol" placeholder="-" 
-                  v-model="partido.home_score" 
-                  @change="guardarPronostico(partido)" 
-                />
-                <span class="vs">VS</span>
-                <input 
-                  type="number" min="0" max="15" class="input-gol" placeholder="-" 
-                  v-model="partido.away_score" 
-                  @change="guardarPronostico(partido)" 
-                />
+                <div class="fila-equipo">
+                  <div class="detalles-equipo">
+                    <span class="bandera">✈️</span>
+                    <span class="nombre-equipo">{{ partido.away_team }}</span>
+                  </div>
+                  <input 
+                    type="number" min="0" max="15" class="input-gol" placeholder="-" 
+                    v-model="partido.away_score" 
+                    @change="guardarPronostico(partido)" 
+                  />
+                </div>
+
               </div>
-              
             </article>
+
           </div>
         </div>
       </div>
@@ -415,13 +417,13 @@ onMounted(async () => {
 .cabecera { text-align: center; margin-bottom: 30px; }
 .cabecera h1 { color: #1e3a8a; font-size: 2.5rem; margin-bottom: 5px; }
 .mensaje-carga { text-align: center; font-size: 1.2rem; color: #64748b; }
-.grid-partidos { display: flex; flex-direction: column; gap: 15px; }
+
 .tarjeta-partido { background-color: white; border-radius: 12px; padding: 15px 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }
 .tarjeta-encabezado { display: flex; justify-content: space-between; font-size: 0.85rem; color: #64748b; margin-bottom: 15px; border-bottom: 1px solid #f1f5f9; padding-bottom: 8px; }
 .fase { font-weight: bold; color: #2563eb; background-color: #dbeafe; padding: 2px 8px; border-radius: 4px; }
 .tarjeta-cuerpo { display: flex; justify-content: space-between; align-items: center; }
-.equipo { flex: 1; text-align: center; font-weight: bold; font-size: 1.1rem; color: #334155; }
-.pronostico { display: flex; align-items: center; gap: 10px; }
+/*.equipo { flex: 1; text-align: center; font-weight: bold; font-size: 1.1rem; color: #334155; }*/
+
 .vs { font-size: 0.9rem; color: #94a3b8; font-weight: bold; }
 .input-gol { width: 50px; height: 50px; text-align: center; font-size: 1.5rem; font-weight: bold; border: 2px solid #cbd5e1; border-radius: 8px; color: #1e293b; transition: border-color 0.2s; }
 .input-gol:focus { outline: none; border-color: #3b82f6; }
@@ -552,6 +554,101 @@ onMounted(async () => {
   display: inline-block;
   animation: latido 0.3s ease-out;
 }
+
+
+/* --- CONTENEDOR RESPONSIVO --- */
+.vista-partidos {
+  max-width: 1200px; /* Le damos permiso de estirarse más en PC */
+  margin: 0 auto;
+  padding: 0 15px;
+}
+
+.grid-partidos {
+  display: grid;
+  /* Esta línea es la magia: tarjetas de mínimo 320px, y si sobra espacio, caben más en la misma fila */
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+/* --- DISEÑO DE LA TARJETA --- */
+.tarjeta-partido {
+  background: white;
+  border-radius: 12px;
+  padding: 15px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+  border: 1px solid #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  transition: transform 0.2s;
+}
+
+.tarjeta-partido:hover {
+  box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+}
+
+.tarjeta-encabezado {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: #64748b;
+  border-bottom: 1px solid #f1f5f9;
+  padding-bottom: 8px;
+}
+
+.fase { font-weight: bold; color: #2563eb; }
+
+/* --- FILAS DE EQUIPOS Y CASILLEROS --- */
+.cuerpo-partido {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.fila-equipo {
+  display: flex;
+  justify-content: space-between; /* Empuja el nombre a la izquierda y el input a la derecha */
+  align-items: center;
+  background-color: #f8fafc;
+  padding: 8px 12px;
+  border-radius: 8px;
+}
+
+.detalles-equipo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.input-gol {
+  width: 50px;
+  height: 45px;
+  text-align: center;
+  font-size: 1.3rem;
+  font-weight: bold;
+  border: 2px solid #cbd5e1;
+  border-radius: 8px;
+  color: #0f172a;
+  background: white;
+  outline: none;
+  transition: all 0.2s;
+}
+
+.input-gol:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+}
+
+/* Opcional: Oculta las flechitas de subir/bajar del input de números para que se vea más limpio */
+.input-gol::-webkit-inner-spin-button, 
+.input-gol::-webkit-outer-spin-button { 
+  -webkit-appearance: none; 
+  margin: 0; 
+}
+
 
 /* Animación que hace que el botoncito brinque un poco al aparecer */
 @keyframes latido {
