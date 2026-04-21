@@ -376,11 +376,17 @@ onMounted(async () => {
 <style scoped>
 /* (El CSS se mantiene igual, solo agregamos el estilo del botón) */
 .contenedor {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;  
   width: 100%;
-  max-width: 100%; /* Le quitamos cualquier candado de tamaño angosto */
-  margin: 0 auto;  
+  min-height: 100vh; /* 100vh significa: "Ocupa el 100% del alto de la pantalla visual" */  
+  /* --- AJUSTES DEL FONDO DEL ESTADIO --- */
+  background-image: url('/ruta-a-tu-imagen/estadio.jpg'); /* ¡Asegúrate de poner aquí el nombre correcto de tu imagen! */
+  background-size: cover; /* Hace que la imagen crezca para cubrir todo sin deformarse */
+  background-position: center center; /* Centra la imagen perfectamente */
+  background-attachment: fixed; /* Efecto elegante: el fondo se queda quieto aunque hagas scroll hacia abajo */
+  background-repeat: no-repeat;
+  /* ------------------------------------- */
   padding: 20px;
+  box-sizing: border-box;
 }
 
 /* Estilos para el perfil y botón de salir */
