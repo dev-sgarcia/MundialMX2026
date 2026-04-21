@@ -376,12 +376,11 @@ onMounted(async () => {
 <style scoped>
 /* (El CSS se mantiene igual, solo agregamos el estilo del botón) */
 .contenedor {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  max-width: 800px;
-  margin: 0 auto;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;  
+  width: 100%;
+  max-width: 100%; /* Le quitamos cualquier candado de tamaño angosto */
+  margin: 0 auto;  
   padding: 20px;
-  background-color: #f8fafc;
-  min-height: 100vh;
 }
 
 /* Estilos para el perfil y botón de salir */
@@ -564,16 +563,17 @@ onMounted(async () => {
 
 /* --- CONTENEDOR RESPONSIVO --- */
 .vista-partidos {
-  max-width: 1200px; /* Le damos permiso de estirarse más en PC */
+  max-width: 1400px; /* Mucho más espacio para tus múltiples columnas */
   margin: 0 auto;
   padding: 0 15px;
 }
 
 .grid-partidos {
   display: grid;
-  /* Esta línea es la magia: tarjetas de mínimo 320px, y si sobra espacio, caben más en la misma fila */
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 20px;
+  /* Cambiamos auto-fit por auto-fill, y subimos el mínimo a 350px para mejor proporción */
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 25px;
+  align-items: start; /* Evita que las tarjetas se estiren hacia abajo si otra es más alta */
 }
 
 /* --- DISEÑO DE LA TARJETA --- */
