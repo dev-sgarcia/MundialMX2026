@@ -580,7 +580,7 @@ onMounted(async () => {
 .tarjeta-partido {
   background: white;
   border-radius: 12px;
-  padding: 15px;
+  /*padding: 15px;*/
   box-shadow: 0 4px 6px rgba(0,0,0,0.05);
   border: 1px solid #e2e8f0;
   display: flex;
