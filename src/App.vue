@@ -61,6 +61,7 @@
         </div>
       </div>
 
+
       <div v-if="vista === 'partidos'" class="vista-partidos">
         <button @click="volverAlLobby" class="btn-volver">⬅️ Volver a mis ligas</button>
         <h2 class="titulo-liga-activa">{{ ligaActual?.name }}</h2>
@@ -70,11 +71,52 @@
         </div>
 
         <div v-for="(partidosDelDia, fecha) in partidosAgrupados" :key="fecha" class="bloque-jornada">
+          
           <h2 class="titulo-fecha">📅 {{ fecha }}</h2>
+          
           <div class="grid-partidos">
-             </div>
+            <article v-for="partido in partidosDelDia" :key="partido.id" class="tarjeta-partido">
+              
+              <div class="tarjeta-encabezado">
+                <span class="fase">
+                  {{ partido.group_name || 'Fase de Grupos' }}
+                  <span v-if="partido.guardado" class="badge-guardado">✅ Guardado</span>
+                </span>
+                <span class="fecha">🏟️ {{ partido.stadium }} | 🕒 {{ partido.match_time }}</span>
+              </div>
+
+              <div class="equipos">
+                <div class="equipo">
+                  <span class="bandera">🏳️</span>
+                  <span class="nombre-equipo">{{ partido.home_team }}</span>
+                </div>
+                <span class="vs-fijo">VS</span>
+                <div class="equipo">
+                  <span class="bandera">🏴</span>
+                  <span class="nombre-equipo">{{ partido.away_team }}</span>
+                </div>
+              </div>
+
+              <div class="pronostico">
+                <input 
+                  type="number" min="0" max="15" class="input-gol" placeholder="-" 
+                  v-model="partido.home_score" 
+                  @change="guardarPronostico(partido)" 
+                />
+                <span class="vs">VS</span>
+                <input 
+                  type="number" min="0" max="15" class="input-gol" placeholder="-" 
+                  v-model="partido.away_score" 
+                  @change="guardarPronostico(partido)" 
+                />
+              </div>
+              
+            </article>
+          </div>
         </div>
       </div>
+      
+      
     </div>
 
   </main>
