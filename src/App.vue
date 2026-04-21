@@ -563,9 +563,9 @@ onMounted(async () => {
 
 /* --- CONTENEDOR RESPONSIVO --- */
 .vista-partidos {
-  max-width: 1400px; /* Mucho más espacio para tus múltiples columnas */
+  max-width: 1920px; /* Mucho más espacio para tus múltiples columnas */
   margin: 0 auto;
-  padding: 0 15px;
+  /*padding: 0 15px;*/
 }
 
 .grid-partidos {
