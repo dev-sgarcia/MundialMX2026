@@ -123,7 +123,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { supabase } from './supabase'
 
 // Variables reactivas
@@ -228,6 +228,17 @@ const volverAlLobby = () => {
   ligaActual.value = null
   vista.value = 'lobby'
 }
+
+const partidosAgrupados = computed(() => {
+  return partidos.value.reduce((grupos, partido) => {
+    const fecha = partido.match_date || 'Fecha por definir';
+    if (!grupos[fecha]) {
+      grupos[fecha] = [];
+    }
+    grupos[fecha].push(partido);
+    return grupos;
+  }, {});
+});
 
 // Cargar los partidos y los pronósticos de la liga seleccionada
 const cargarPartidos = async () => {
