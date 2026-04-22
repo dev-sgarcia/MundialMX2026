@@ -606,7 +606,7 @@ input::-webkit-inner-spin-button {
 }
 
 .logo-liga {
-  width: 40px; /* Ajusta el tamaño de la imagen */
+  width: 120px; /* Ajusta el tamaño de la imagen */
   height: auto; /* Mantiene la proporción */
   /* Otros estilos si quieres, ej: border-radius: 50%; */
 }
