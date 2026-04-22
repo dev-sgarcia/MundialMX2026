@@ -1,47 +1,31 @@
 <template>
-  <main class="contenedor">
-    <header class="cabecera">
-      <h1>🏆 Mundial México 2026 🏆</h1>      
-      <div v-if="sesionActiva" class="perfil-usuario">
-        <p>¡Hola, <strong>{{ usuario?.full_name || 'Estratega' }}</strong>!</p>
-        <span class="leyenda-jornada">Tu Pronóstico de la Jornada</span>
-        <button @click="cerrarSesion" class="btn-salir">Cerrar Sesión</button>
-      </div>
-    </header>    
-
-      <div v-if="mostrarReglas" class="modal-fondo" @click.self="mostrarReglas = false">
-        <div class="modal-contenido">
-          <h3>📜 Reglas MundialMX2026</h3>
-          <div class="reglas-texto">
-            <ul>
-              <li><strong>3 Puntos:</strong> Si le atinas al marcador exacto (Ej. Dices 2-1 y termina 2-1).</li>
-              <li><strong>1 Punto :</strong> Si le atinas al equipo ganador o si es empate, pero el marcador no es exacto (Ej. Dices 2-0 y termina 1-0).</li>
-              <li><strong>10 Puntos :</strong> Si eliges al campeón desde el inicio del torneo.</li>
-              <li><strong>Tiempo límite:</strong> Tienes hasta 1 hora antes de que inicie cada partido para guardar o cambiar tu resultado.</li>
-              <li><strong>Premios por puntos:</strong> 1 Ganador de fases de grupo, 1 Ganador fase finalistas y 1 Ganador puntaje total.</li>
-              <li><strong>Desempate :</strong> En caso de empate en puntos, se toma en cuenta el primero que haya registrado su marcador.</li>
-            </ul>
-          </div>
-          <button @click="mostrarReglas = false" class="btn-cerrar-modal">Entendido</button>
-        </div>
-      </div>
+  <div class="pantalla-completa-wrapper">
     
-    <div v-if="!sesionActiva" class="pantalla-login">
-      <div class="login-tarjeta">
-        <h2>¡Bienvenido al torneo!</h2>
-        <p>Para registrar tus pronósticos y competir por la gloria, necesitas acceder.</p>
-        
-        <button @click="iniciarSesion" class="btn-google">
-          Acceder con Google 🚀
-        </button>
+    <div v-if="!sesionActiva" class="caja-login-flotante">
+      <h1>🏆 Mundial México 2026 🏆</h1>
+      <h2>¡Bienvenido al torneo!</h2>
+      <p>Para registrar tus pronósticos y competir por la gloria, necesitas acceder.</p>
+      
+      <button @click="iniciarSesion" class="btn-google">
+        Acceder con Google 🚀
+      </button>
 
-        <div class="enlaces-legales">
-          <a href="#" @click.prevent="mostrarReglas = true">📜 Reglas del Torneo</a>
-        </div>
+      <div class="enlaces-legales">
+        <a href="#" @click.prevent="mostrarReglas = true">📜 Reglas del Torneo</a>
       </div>
     </div>
 
-    <div v-if="sesionActiva">   
+    <div v-if="sesionActiva" class="zona-privada">
+      
+      <header class="cabecera">
+        <h1>🏆 Mundial México 2026 🏆</h1>      
+        <div class="perfil-usuario">
+          <p>¡Hola, <strong>{{ usuario?.full_name || 'Estratega' }}</strong>!</p>
+          <span class="leyenda-jornada">Tu Pronóstico de la Jornada</span>
+          <button @click="cerrarSesion" class="btn-salir">Cerrar Sesión</button>
+        </div>
+      </header>
+
       <div v-if="vista === 'lobby'" class="vista-lobby">
         <div class="encabezado-lobby">
           <h2>Mis Ligas</h2>
@@ -61,7 +45,6 @@
         </div>
       </div>
 
-
       <div v-if="vista === 'partidos'" class="vista-partidos">
         <button @click="volverAlLobby" class="btn-volver">⬅️ Volver a mis ligas</button>
         <h2 class="titulo-liga-activa">{{ ligaActual?.name }}</h2>
@@ -75,8 +58,8 @@
           <h2 class="titulo-fecha">📅 {{ fecha }}</h2>
           
           <div class="grid-partidos">
-
             <article v-for="partido in partidosDelDia" :key="partido.id" class="tarjeta-partido">              
+              
               <div class="tarjeta-encabezado">
                 <span class="fase">
                   {{ partido.group_name || 'Fase de Grupos' }}
@@ -86,7 +69,6 @@
               </div>
 
               <div class="cuerpo-partido">
-                
                 <div class="fila-equipo">
                   <div class="detalles-equipo">
                     <span class="bandera">🏠</span>
@@ -110,18 +92,31 @@
                     @change="guardarPronostico(partido)" 
                   />
                 </div>
-
               </div>
-            </article>
 
+            </article>
           </div>
         </div>
       </div>
-      
-      
+
+    </div> <div v-if="mostrarReglas" class="modal-fondo" @click.self="mostrarReglas = false">
+      <div class="modal-contenido">
+        <h3>📜 Reglas MundialMX2026</h3>
+        <div class="reglas-texto">
+          <ul>
+            <li><strong>3 Puntos:</strong> Si le atinas al marcador exacto (Ej. Dices 2-1 y termina 2-1).</li>
+            <li><strong>1 Punto :</strong> Si le atinas al equipo ganador o si es empate, pero el marcador no es exacto (Ej. Dices 2-0 y termina 1-0).</li>
+            <li><strong>10 Puntos :</strong> Si eliges al campeón desde el inicio del torneo.</li>
+            <li><strong>Tiempo límite:</strong> Tienes hasta 1 hora antes de que inicie cada partido para guardar o cambiar tu resultado.</li>
+            <li><strong>Premios por puntos:</strong> 1 Ganador de fases de grupo, 1 Ganador fase finalistas y 1 Ganador puntaje total.</li>
+            <li><strong>Desempate :</strong> En caso de empate en puntos, se toma en cuenta el primero que haya registrado su marcador.</li>
+          </ul>
+        </div>
+        <button @click="mostrarReglas = false" class="btn-cerrar-modal">Entendido</button>
+      </div>
     </div>
 
-  </main>
+  </div> 
 </template>
 
 <script setup>
@@ -167,7 +162,6 @@ const cargarLigas = async (userId) => {
   }
 }
 
-// Función rápida para crear una liga provisional
 // Función para crear la liga "Mundialito RA"
 const crearLigaPrueba = async () => {
   const { data: { session } } = await supabase.auth.getSession()
@@ -374,301 +368,198 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-/* (El CSS se mantiene igual, solo agregamos el estilo del botón) */
-.contenedor {
+/* 1. CONFIGURACIÓN DEL LIENZO (FONDO TOTAL) */
+.pantalla-completa-wrapper {
   width: 100%;
-  min-height: 100vh; /* 100vh significa: "Ocupa el 100% del alto de la pantalla visual" */  
-  /* --- AJUSTES DEL FONDO DEL ESTADIO --- */
-  background-image: url('https://images.unsplash.com/photo-1522778119026-d647f0596c20?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80'); /* ¡Asegúrate de poner aquí el nombre correcto de tu imagen! */
-  background-size: cover; /* Hace que la imagen crezca para cubrir todo sin deformarse */
-  background-position: center center; /* Centra la imagen perfectamente */
-  background-attachment: fixed; /* Efecto elegante: el fondo se queda quieto aunque hagas scroll hacia abajo */
-  background-repeat: no-repeat;
-  /* ------------------------------------- */
-  padding: 20px;
-  box-sizing: border-box;
-}
-
-/* Estilos para el perfil y botón de salir */
-.perfil-usuario {
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
+  /* Centra el login cuando no hay sesión activa */
+  justify-content: center; 
   align-items: center;
-  gap: 10px;
-}
-.btn-salir {
-  background-color: #fee2e2;
-  color: #ef4444;
-  border: 1px solid #f87171;
-  padding: 5px 15px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 0.9rem;
-  transition: all 0.2s;
-}
-.btn-salir:hover {
-  background-color: #fecaca;
-}
-.perfil-usuario p {
-  color: #1e293b; /* Un gris casi negro, muy nítido */
-  font-size: 1.2rem; /* Un poco más grande */
-  margin-bottom: 5px;
-}
-.perfil-usuario strong {
-  color: #2563eb; /* El azul vibrante de tu tema */
-  font-weight: 800; /* Negrita más gruesa */
+  
+  /* FONDO DEL ESTADIO */
+  background-image: url('https://images.unsplash.com/photo-1522778119026-d647f0596c20?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80');
+  background-size: cover;
+  background-position: center center;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  
+  padding: 20px;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 }
 
-.cabecera { text-align: center; margin-bottom: 30px; }
-.cabecera h1 { color: #1e3a8a; font-size: 2.5rem; margin-bottom: 5px; }
-.mensaje-carga { text-align: center; font-size: 1.2rem; color: #64748b; }
-
-.tarjeta-partido { background-color: white; border-radius: 12px; padding: 15px 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }
-.tarjeta-encabezado { display: flex; justify-content: space-between; font-size: 0.85rem; color: #64748b; margin-bottom: 15px; border-bottom: 1px solid #f1f5f9; padding-bottom: 8px; }
-.fase { font-weight: bold; color: #2563eb; background-color: #dbeafe; padding: 2px 8px; border-radius: 4px; }
-.tarjeta-cuerpo { display: flex; justify-content: space-between; align-items: center; }
-/*.equipo { flex: 1; text-align: center; font-weight: bold; font-size: 1.1rem; color: #334155; }*/
-
-.vs { font-size: 0.9rem; color: #94a3b8; font-weight: bold; }
-.input-gol { width: 50px; height: 50px; text-align: center; font-size: 1.5rem; font-weight: bold; border: 2px solid #cbd5e1; border-radius: 8px; color: #1e293b; transition: border-color 0.2s; }
-.input-gol:focus { outline: none; border-color: #3b82f6; }
-.input-gol::-webkit-outer-spin-button, .input-gol::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-
-/* NUEVOS ESTILOS PARA EL LOGIN */
-.pantalla-login {
+/* 2. DISEÑO DEL LOGIN (CAJA BLANCA FLOTANTE) */
+.caja-login-flotante {
+  background: rgba(255, 255, 255, 0.96);
+  padding: 40px;
+  border-radius: 20px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
   text-align: center;
-  background: white;
-  padding: 40px 20px;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-  border: 1px solid #e2e8f0;
+  width: 100%;
+  max-width: 450px;
+  animation: entradaSuave 0.5s ease-out;
 }
-.pantalla-login h2 { color: #334155; margin-bottom: 10px; }
-.pantalla-login p { color: #64748b; margin-bottom: 25px; }
+
+@keyframes entradaSuave {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
 
 .btn-google {
-  background-color: #ffffff;
-  color: #334155;
-  border: 1px solid #cbd5e1;
+  background: white;
+  color: #374151;
+  border: 1px solid #d1d5db;
   padding: 12px 24px;
-  font-size: 1.1rem;
-  font-weight: bold;
   border-radius: 8px;
-  cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-  transition: all 0.2s;
-}
-.btn-google:hover {
-  background-color: #f8fafc;
-  border-color: #94a3b8;
-}
-
-/* --- ESTILOS DE LA NUEVA PORTADA --- */
-.pantalla-login {
-  /* Imagen de estadio gratuita de alta calidad */
-  background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1522778119026-d647f0596c20?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80');  
-  background-size: cover;
-  background-position: center;
-  border-radius: 12px;
-  padding: 60px 20px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 400px;
-  margin-top: 20px;
-}
-
-.login-tarjeta {
-  background: rgba(255, 255, 255, 0.95);
-  padding: 40px;
-  border-radius: 16px;
-  text-align: center;
-  max-width: 400px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-}
-
-.login-tarjeta h2 { color: #1e293b; margin-bottom: 15px; font-size: 1.8rem; }
-.login-tarjeta p { color: #475569; margin-bottom: 25px; line-height: 1.5; }
-
-.enlaces-legales { margin-top: 25px; }
-.enlaces-legales a {
-  color: #2563eb;
-  text-decoration: none;
-  font-size: 0.9rem;
-  font-weight: bold;
-  transition: color 0.2s;
-}
-.enlaces-legales a:hover { color: #1d4ed8; text-decoration: underline; }
-
-/* --- ESTILOS DE LA VENTANA EMERGENTE (MODAL) --- */
-.modal-fondo {
-  position: fixed;
-  top: 0; left: 0; width: 100%; height: 100%;
-  background-color: rgba(0, 0, 0, 0.5); /* Fondo oscuro semitransparente */
-  backdrop-filter: blur(4px); /* Efecto cristal */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000; /* Para que quede por encima de todo */
-}
-
-.modal-contenido {
-  background-color: white;
-  padding: 30px;
-  border-radius: 12px;
-  max-width: 500px;
-  width: 90%;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-}
-
-.modal-contenido h3 { color: #1e3a8a; margin-bottom: 20px; border-bottom: 2px solid #f1f5f9; padding-bottom: 10px; }
-.reglas-texto ul { text-align: left; color: #334155; line-height: 1.6; padding-left: 20px; margin-bottom: 25px; }
-.reglas-texto li { margin-bottom: 10px; }
-
-.btn-cerrar-modal {
-  background-color: #1e293b;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 6px;
-  font-weight: bold;
+  font-weight: 600;
   cursor: pointer;
   width: 100%;
-  transition: background-color 0.2s;
-}
-.btn-cerrar-modal:hover { background-color: #334155; }
-
-/* --- ESTILOS NUEVOS PARA EL FEEDBACK VISUAL --- */
-.leyenda-jornada {
-  color: #64748b;
-  font-size: 1rem;
-  margin-bottom: 15px;
-  font-weight: 500;
+  margin: 20px 0;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
 }
 
-.badge-guardado {
-  margin-left: 10px;
-  color: #059669;
-  background-color: #d1fae5;
-  padding: 4px 8px;
-  border-radius: 6px;
-  font-size: 0.75rem;
-  font-weight: bold;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-  display: inline-block;
-  animation: latido 0.3s ease-out;
+.btn-google:hover {
+  background: #f9fafb;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }
 
-/* Animación que hace que el botoncito brinque un poco al aparecer */
-@keyframes latido {
-  0% { transform: scale(0.8); opacity: 0; }
-  50% { transform: scale(1.1); }
-  100% { transform: scale(1); opacity: 1; }
-}
-
-
-/* --- CONTENEDOR RESPONSIVO --- */
-.vista-partidos {
-  max-width: 1400px; /* Mucho más espacio para tus múltiples columnas */
+/* 3. ZONA PRIVADA (LOBBY Y CANCHA) */
+.zona-privada {
+  width: 100%;
+  max-width: 1400px; /* Expandimos para aprovechar tu monitor 1080p */
+  align-self: flex-start; /* Evita que el dashboard se centre verticalmente */
   margin: 0 auto;
-  padding: 0 15px;
 }
 
+.cabecera {
+  background: rgba(255, 255, 255, 0.9);
+  padding: 20px;
+  border-radius: 15px;
+  margin-bottom: 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  backdrop-filter: blur(5px);
+}
+
+.perfil-usuario { text-align: right; }
+.btn-salir {
+  background: #fee2e2;
+  color: #dc2626;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+/* 4. GRID DE PARTIDOS (MULTICOLUMNA) */
 .grid-partidos {
   display: grid;
-  /* Cambiamos auto-fit por auto-fill, y subimos el mínimo a 350px para mejor proporción */
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-  gap: 25px;
-  align-items: start; /* Evita que las tarjetas se estiren hacia abajo si otra es más alta */
+  /* La magia: En PC mostrará 3 o 4 columnas, en móvil 1 */
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: 20px;
+  margin-top: 15px;
 }
 
-/* --- DISEÑO DE LA TARJETA --- */
+.titulo-fecha {
+  color: white;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+  margin: 30px 0 15px 0;
+  background: rgba(0,0,0,0.3);
+  display: inline-block;
+  padding: 5px 15px;
+  border-radius: 20px;
+}
+
+/* 5. TARJETA DE PARTIDO (EQUIPOS ALINEADOS) */
 .tarjeta-partido {
   background: white;
   border-radius: 12px;
-  /*padding: 15px;*/
-  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-  border: 1px solid #e2e8f0;
+  padding: 15px;
   display: flex;
   flex-direction: column;
-  gap: 15px;
-  transition: transform 0.2s;
+  gap: 12px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }
 
-.tarjeta-partido:hover {
-  box-shadow: 0 8px 15px rgba(0,0,0,0.1);
-}
-
-.tarjeta-encabezado {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.75rem;
-  color: #64748b;
-  border-bottom: 1px solid #f1f5f9;
-  padding-bottom: 8px;
-}
-
-.fase { font-weight: bold; color: #2563eb; }
-
-/* --- FILAS DE EQUIPOS Y CASILLEROS --- */
 .cuerpo-partido {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
 }
 
 .fila-equipo {
   display: flex;
-  justify-content: space-between; /* Empuja el nombre a la izquierda y el input a la derecha */
+  justify-content: space-between; /* Nombre a la izquierda, input a la derecha */
   align-items: center;
-  background-color: #f8fafc;
-  padding: 8px 12px;
+  background: #f8fafc;
+  padding: 10px;
   border-radius: 8px;
 }
 
 .detalles-equipo {
   display: flex;
   align-items: center;
-  gap: 12px;
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: #1e293b;
+  gap: 10px;
+  font-weight: bold;
 }
 
 .input-gol {
-  width: 50px;
+  width: 55px;
   height: 45px;
   text-align: center;
-  font-size: 1.3rem;
+  font-size: 1.4rem;
   font-weight: bold;
   border: 2px solid #cbd5e1;
   border-radius: 8px;
-  color: #0f172a;
+}
+
+/* 6. MODALES Y EXTRAS */
+.modal-fondo {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-contenido {
   background: white;
-  outline: none;
-  transition: all 0.2s;
+  padding: 30px;
+  border-radius: 15px;
+  max-width: 500px;
+  width: 90%;
 }
 
-.input-gol:focus {
-  border-color: #2563eb;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+.grid-ligas {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
 }
 
-/* Opcional: Oculta las flechitas de subir/bajar del input de números para que se vea más limpio */
-.input-gol::-webkit-inner-spin-button, 
-.input-gol::-webkit-outer-spin-button { 
-  -webkit-appearance: none; 
-  margin: 0; 
+.tarjeta-liga {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: transform 0.2s;
 }
 
+.tarjeta-liga:hover { transform: scale(1.03); }
 
-.vista-lobby { max-width: 800px; margin: 0 auto; }
-.encabezado-lobby { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-.btn-crear { background: #2563eb; color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; }
-.grid-ligas { display: grid; gap: 15px; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); }
-.tarjeta-liga { background: white; padding: 20px; border-radius: 12px; border-left: 5px solid #2563eb; cursor: pointer; transition: transform 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.05); text-align: left; }
-.tarjeta-liga:hover { transform: translateY(-3px); }
-.campeon-texto { font-size: 0.85rem; color: #64748b; margin-top: 10px; }
-.btn-volver { background: transparent; border: 1px solid #cbd5e1; padding: 8px 12px; border-radius: 6px; cursor: pointer; margin-bottom: 20px; }
-.titulo-liga-activa { color: #1e293b; margin-bottom: 30px; font-size: 2rem; }
+/* Quitar flechitas de los inputs */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
 </style>
