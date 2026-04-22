@@ -49,7 +49,7 @@
         <button @click="volverAlLobby" class="btn-volver">⬅️ Volver a mis ligas</button>
 
         <div class="encabezado-liga">
-          <img src="/src/assets/ra_transparent.png" alt="Logo de la Liga" class="logo-liga" />
+          <img src="/ra_transparent.png" alt="Logo de la Liga" class="logo-liga" />
           <h2 class="titulo-liga-activa">{{ ligaActual?.name }}</h2>
         </div>
 
@@ -596,6 +596,7 @@ input::-webkit-inner-spin-button {
   margin: 0;
 }
 
+
 .encabezado-liga {
   display: flex;
   align-items: center; /* Centra verticalmente logo y texto */
@@ -610,9 +611,5 @@ input::-webkit-inner-spin-button {
   /* Otros estilos si quieres, ej: border-radius: 50%; */
 }
 
-/* Asegúrate de ajustar márgenes si es necesario debido al Flexbox */
-.titulo-liga-activa {
-  margin: 0; /* Flexbox gap maneja el espacio */
-  /* ... tus estilos existentes de dorado y sombra ... */
-}
+
 </style>
