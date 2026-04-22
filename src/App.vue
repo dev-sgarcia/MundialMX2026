@@ -49,8 +49,8 @@
         <button @click="volverAlLobby" class="btn-volver">⬅️ Volver a mis ligas</button>
 
         <div class="encabezado-liga">
-          <img src="/ra_transparent.png" alt="Logo de la Liga" class="logo-liga" />
           <h2 class="titulo-liga-activa">{{ ligaActual?.name }}</h2>
+          <img src="/ra_transparent.png" alt="Logo de la Liga" class="logo-liga" />          
         </div>
 
 
