@@ -448,6 +448,24 @@ onMounted(async () => {
   backdrop-filter: blur(5px);
 }
 
+/* EFECTO DORADO PARA EL NOMBRE DE LA LIGA */
+.titulo-liga-activa {
+  font-size: 2.8rem; /* Letra grande y dominante */
+  font-weight: 900;
+  text-align: center;
+  margin: 15px 0 30px 0;
+  text-transform: uppercase; /* Todo en mayúsculas para más impacto */
+  letter-spacing: 2px;
+  
+  /* El secreto del color dorado */
+  background: linear-gradient(to right, #fef08a, #f59e0b, #fbbf24);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  
+  /* Sombra negra muy fuerte para separarlo del fondo */
+  filter: drop-shadow(2px 4px 6px rgba(0, 0, 0, 0.9));
+}
+
 .perfil-usuario { text-align: right; }
 .btn-salir {
   background: #fee2e2;
@@ -468,14 +486,23 @@ onMounted(async () => {
   margin-top: 15px;
 }
 
+/* FECHAS DE LOS PARTIDOS (Cristal oscuro con acento dorado) */
 .titulo-fecha {
-  color: white;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-  margin: 30px 0 15px 0;
-  background: rgba(0,0,0,0.3);
+  color: #ffffff;
+  margin: 40px 0 20px 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  
+  /* Fondo oscuro semitransparente con desenfoque */
+  background: rgba(15, 23, 42, 0.85); /* Un azul marino casi negro */
+  backdrop-filter: blur(5px);
+  
+  /* Detalles de diseño */
   display: inline-block;
-  padding: 5px 15px;
-  border-radius: 20px;
+  padding: 10px 25px;
+  border-radius: 8px; /* Bordes modernos */
+  border-left: 6px solid #fbbf24; /* Línea dorada a la izquierda */
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.5);
 }
 
 /* 5. TARJETA DE PARTIDO (EQUIPOS ALINEADOS) */
