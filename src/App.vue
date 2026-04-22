@@ -50,7 +50,6 @@
 
         <div class="encabezado-liga">
           <h2 class="titulo-liga-activa">{{ ligaActual?.name }}</h2>
-          <img src="/ra_transparent.png" alt="Logo de la Liga" class="logo-liga" />          
         </div>
 
 
@@ -595,21 +594,4 @@ input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
-
-
-.encabezado-liga {
-  display: flex;
-  align-items: center; /* Centra verticalmente logo y texto */
-  justify-content: center; /* O flex-start si prefieres alineación a la izquierda */
-  gap: 15px; /* Espacio entre el logo y el nombre */
-  margin-bottom: 20px;
-}
-
-.logo-liga {
-  width: 120px; /* Ajusta el tamaño de la imagen */
-  height: auto; /* Mantiene la proporción */
-  /* Otros estilos si quieres, ej: border-radius: 50%; */
-}
-
-
 </style>
