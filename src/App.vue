@@ -47,7 +47,13 @@
 
       <div v-if="vista === 'partidos'" class="vista-partidos">
         <button @click="volverAlLobby" class="btn-volver">⬅️ Volver a mis ligas</button>
-        <h2 class="titulo-liga-activa">{{ ligaActual?.name }}</h2>
+
+        <div class="encabezado-liga">
+          <img src="/src/assets/ra_transparent.png" alt="Logo de la Liga" class="logo-liga" />
+          <h2 class="titulo-liga-activa">{{ ligaActual?.name }}</h2>
+        </div>
+
+
 
         <div v-if="cargando" class="mensaje-carga">
           <p>⏳ Trayendo los partidos desde la nube...</p>
@@ -588,5 +594,25 @@ input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
+}
+
+.encabezado-liga {
+  display: flex;
+  align-items: center; /* Centra verticalmente logo y texto */
+  justify-content: center; /* O flex-start si prefieres alineación a la izquierda */
+  gap: 15px; /* Espacio entre el logo y el nombre */
+  margin-bottom: 20px;
+}
+
+.logo-liga {
+  width: 40px; /* Ajusta el tamaño de la imagen */
+  height: auto; /* Mantiene la proporción */
+  /* Otros estilos si quieres, ej: border-radius: 50%; */
+}
+
+/* Asegúrate de ajustar márgenes si es necesario debido al Flexbox */
+.titulo-liga-activa {
+  margin: 0; /* Flexbox gap maneja el espacio */
+  /* ... tus estilos existentes de dorado y sombra ... */
 }
 </style>
