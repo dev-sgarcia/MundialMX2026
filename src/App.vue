@@ -31,7 +31,9 @@
           <h2>Mis Ligas</h2>
           <div class="botones-lobby">
             <button @click="mostrarModalUnirse = true" class="btn-unirse">🤝 Unirse con Código</button>
-            <button @click="crearLigaPrueba" class="btn-crear">➕ Crear Liga</button>
+            <button v-if="esAdmin" @click="crearLigaPrueba" class="btn-crear">
+              ➕ Crear Liga
+            </button>            
           </div>
         </div>        
 
@@ -152,6 +154,11 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import { supabase } from './supabase'
+
+const esAdmin = computed(() => {
+  // Comparamos el correo de la sesión activa con el tuyo
+  return usuario.value?.email === 'ingeniero.mx@gmail.com';
+});
 
 // Variables reactivas
 const partidos = ref([])
@@ -651,12 +658,18 @@ onMounted(async () => {
   z-index: 1000;
 }
 
+/* Aseguramos que el contenido del modal sea un bloque centrado */
 .modal-contenido {
   background: white;
-  padding: 30px;
-  border-radius: 15px;
-  max-width: 500px;
+  padding: 35px;
+  border-radius: 20px;
+  max-width: 450px; /* Un poco más ancho para que respire */
   width: 90%;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Esto centra todo horizontalmente */
+  text-align: center;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
 }
 
 .grid-ligas {
@@ -700,21 +713,27 @@ input::-webkit-inner-spin-button {
 }
 .btn-unirse:hover { transform: scale(1.05); }
 
-.input-codigo { 
-  width: 100%; 
-  padding: 15px; 
-  font-size: 1.4rem; 
-  text-align: center; 
-  border: 2px solid #cbd5e1; 
-  border-radius: 8px; 
-  margin: 20px 0; 
-  text-transform: uppercase; /* Fuerza las mayúsculas */
-  font-weight: bold;
-  letter-spacing: 2px;
+/* El input ahora se centrará por sí solo */
+.input-codigo {
+  width: 100%;
+  max-width: 300px; /* Limitamos el ancho para que no se vea tosco */
+  padding: 12px;
+  font-size: 1.5rem;
+  text-align: center;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  margin: 20px 0;
+  background-color: #f8fafc;
+  color: #1e293b;
+  font-weight: 800;
+  letter-spacing: 3px;
+  transition: all 0.3s ease;
 }
 
 .input-codigo:focus {
   border-color: #10b981;
+  background-color: #ffffff;
+  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
   outline: none;
 }
 
