@@ -29,8 +29,11 @@
       <div v-if="vista === 'lobby'" class="vista-lobby">
         <div class="encabezado-lobby">
           <h2>Mis Ligas</h2>
-          <button @click="crearLigaPrueba" class="btn-crear">➕ Crear Liga de Prueba</button>
-        </div>
+          <div class="botones-lobby">
+            <button @click="mostrarModalUnirse = true" class="btn-unirse">🤝 Unirse con Código</button>
+            <button @click="crearLigaPrueba" class="btn-crear">➕ Crear Liga</button>
+          </div>
+        </div>        
 
         <div v-if="misLigas.length === 0" class="mensaje-vacio">
           <p>Aún no perteneces a ninguna liga. ¡Crea una para empezar!</p>
@@ -121,6 +124,28 @@
       </div>
     </div>
 
+    <div v-if="mostrarModalUnirse" class="modal-fondo" @click.self="mostrarModalUnirse = false">
+      <div class="modal-contenido text-center">
+        <h3>🤝 Unirse a una Liga</h3>
+        <p>Ingresa el código que te compartió el administrador:</p>
+        
+        <input 
+          type="text" 
+          v-model="codigoInvitacion" 
+          placeholder="Ej. MUNDIAL-XYZ" 
+          class="input-codigo"
+          @keyup.enter="unirseALiga"
+        />
+        
+        <p v-if="errorInvitacion" class="mensaje-error">{{ errorInvitacion }}</p>
+        
+        <div class="acciones-modal">
+          <button @click="unirseALiga" class="btn-unirse-accion">Entrar a la Cancha</button>
+          <button @click="mostrarModalUnirse = false" class="btn-salir">Cancelar</button>
+        </div>
+      </div>
+    </div>
+
   </div> 
 </template>
 
@@ -133,6 +158,11 @@ const partidos = ref([])
 const cargando = ref(false)
 const sesionActiva = ref(false) 
 const usuario = ref(null) // Aquí guardaremos el nombre y datos
+
+// Variables para invitaciones
+const mostrarModalUnirse = ref(false)
+const codigoInvitacion = ref('')
+const errorInvitacion = ref('')
 
 // Navegación y Ligas
 const vista = ref('lobby') // Puede ser 'lobby' o 'partidos'
@@ -215,6 +245,63 @@ const crearLigaPrueba = async () => {
     await cargarLigas(userId)
   }
 }
+
+// Lógica para unirse con código / invitación
+const unirseALiga = async () => {
+  errorInvitacion.value = ''; // Limpiamos errores previos
+  
+  if (!codigoInvitacion.value) {
+    errorInvitacion.value = 'Por favor, escribe un código.';
+    return;
+  }
+
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) return;
+
+  // 1. Buscar si existe una liga con ese código en la base de datos
+  const { data: ligas, error: errBusqueda } = await supabase
+    .from('leagues')
+    .select('id, name')
+    .eq('invite_code', codigoInvitacion.value);
+
+  if (errBusqueda || !ligas || ligas.length === 0) {
+    errorInvitacion.value = 'Código no encontrado. Revisa las mayúsculas y guiones.';
+    return;
+  }
+
+  const ligaEncontrada = ligas[0];
+
+  // 2. Revisar si el usuario ya es miembro (para evitar errores de duplicado)
+  const { data: yaEsMiembro } = await supabase
+    .from('league_members')
+    .select('*')
+    .eq('league_id', ligaEncontrada.id)
+    .eq('user_id', session.user.id);
+
+  if (yaEsMiembro && yaEsMiembro.length > 0) {
+    errorInvitacion.value = 'Ya perteneces a esta liga.';
+    return;
+  }
+
+  // 3. Inscribir al jugador oficialmente
+  const { error: errInscripcion } = await supabase
+    .from('league_members')
+    .insert({
+      league_id: ligaEncontrada.id,
+      user_id: session.user.id
+    });
+
+  if (errInscripcion) {
+    errorInvitacion.value = 'Hubo un problema al inscribirte.';
+    console.error(errInscripcion);
+  } else {
+    // ¡Éxito!
+    alert(`¡Felicidades! Te has unido a: ${ligaEncontrada.name}`);
+    mostrarModalUnirse.value = false;
+    codigoInvitacion.value = '';
+    window.location.reload(); // Recargamos la página para que aparezca la nueva liga en el Lobby
+  }
+};
 
 // Navegar hacia el interior de una liga
 const entrarALiga = async (liga) => {
@@ -594,4 +681,66 @@ input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
+
+/* --- ESTILOS DE INVITACIÓN --- */
+.botones-lobby { 
+  display: flex; 
+  gap: 15px; 
+}
+
+.btn-unirse { 
+  background: #10b981; /* Un verde esmeralda para invitar a la acción */
+  color: white; 
+  border: none; 
+  padding: 10px 15px; 
+  border-radius: 8px; 
+  cursor: pointer; 
+  font-weight: bold; 
+  transition: transform 0.2s; 
+}
+.btn-unirse:hover { transform: scale(1.05); }
+
+.input-codigo { 
+  width: 100%; 
+  padding: 15px; 
+  font-size: 1.4rem; 
+  text-align: center; 
+  border: 2px solid #cbd5e1; 
+  border-radius: 8px; 
+  margin: 20px 0; 
+  text-transform: uppercase; /* Fuerza las mayúsculas */
+  font-weight: bold;
+  letter-spacing: 2px;
+}
+
+.input-codigo:focus {
+  border-color: #10b981;
+  outline: none;
+}
+
+.mensaje-error { 
+  color: #dc2626; 
+  font-weight: bold; 
+  margin-bottom: 15px; 
+}
+
+.acciones-modal { 
+  display: flex; 
+  justify-content: space-between; 
+  gap: 15px; 
+  margin-top: 20px; 
+}
+
+.btn-unirse-accion { 
+  background: #2563eb; 
+  color: white; 
+  border: none; 
+  padding: 12px 20px; 
+  border-radius: 8px; 
+  font-weight: bold; 
+  cursor: pointer; 
+  flex-grow: 1; /* Hace que el botón azul tome más espacio */
+}
+.text-center { text-align: center; }
+
 </style>
