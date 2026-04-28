@@ -479,6 +479,7 @@ onMounted(async () => {
   
   /* FONDO DEL ESTADIO */
   background-image: url('https://images.unsplash.com/photo-1522778119026-d647f0596c20?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80');
+    
   background-size: cover;
   background-position: center center;
   background-attachment: fixed;
